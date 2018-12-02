@@ -60,6 +60,7 @@ class ScrollBar extends React.Component {
     document.documentElement.removeEventListener('mouseup', this.handleMouseup);
     this.propNode.container.removeEventListener('scroll', this.handleScroll);
     this.containerObserver.disconnect();
+    this.contentObserver.disconnect();
   }
   static getDerivedStateFromProps (props, state) {
     const { styleOptions } = props;
