@@ -3,7 +3,8 @@ import React from 'react';
 class ScrollBar extends React.Component {
   constructor (props) {
     super(props);
-    this.observer = null;
+    this.containerObserver = null;
+    this.contentObserver = null;
     this.mouseY = 0;
     this.propNode = {
       container: null,
@@ -58,7 +59,7 @@ class ScrollBar extends React.Component {
     document.documentElement.removeEventListener('mousemove', this.handleMousemove);
     document.documentElement.removeEventListener('mouseup', this.handleMouseup);
     this.propNode.container.removeEventListener('scroll', this.handleScroll);
-    this.observer.disconnect();
+    this.containerObserver.disconnect();
   }
   static getDerivedStateFromProps (props, state) {
     const { styleOptions } = props;
@@ -89,12 +90,20 @@ class ScrollBar extends React.Component {
     this.propNode.content = content;
     container.style.overflowY = 'auto';
     container.addEventListener('scroll', this.handleScroll);
-    this.observer = new MutationObserver(() => {
+    this.containerObserver = new MutationObserver(() => {
       this.handleDisplay();
     });
-    this.observer.observe(container.children[0], {
-      'attributes': true,
-      'childList': true
+    this.containerObserver.observe(container, {
+      attributes: true,
+      childList: true
+    });
+    this.contentObserver = new MutationObserver(() => {
+      this.handleDisplay();
+    });
+    this.contentObserver.observe(content, {
+      attributes: true,
+      childList: true,
+      characterData: true
     });
     this.handleDisplay();
   }
